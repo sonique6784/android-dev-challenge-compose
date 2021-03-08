@@ -24,36 +24,46 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.androiddevchallenge.ui.theme.MyTheme
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.text.ParagraphStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewModelScope
+import com.example.androiddevchallenge.ui.theme.MyTheme
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ticker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Date
 import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity() {
@@ -99,7 +109,6 @@ class CounterViewModel : ViewModel() {
     private var jobIncrease: Job? = null
     private var jobDecrease: Job? = null
 
-
     private var start = 0L
 
     fun startIncrease() {
@@ -110,7 +119,6 @@ class CounterViewModel : ViewModel() {
 
         jobIncrease = viewModelScope.launch {
             while (start != 0L) {
-
 
                 val now = Date().time
                 val duration = now - start
@@ -138,7 +146,6 @@ class CounterViewModel : ViewModel() {
                 countDownLength += increment
                 updateClock()
                 delay(waitMilis)
-
             }
         }
     }
@@ -181,7 +188,6 @@ class CounterViewModel : ViewModel() {
                 }
                 updateClock()
                 delay(waitMillis)
-
             }
         }
     }
@@ -241,7 +247,6 @@ class CounterViewModel : ViewModel() {
         countDownStatus = 0
         countDownLength = 0
         _clock.postValue(Clock())
-
     }
 }
 
@@ -292,7 +297,6 @@ fun MyApp(counterViewModel: CounterViewModel = CounterViewModel()) {
                 }
 
                 CanvasDrawOctogon(activeBorder)
-
             }
 
             Row(
@@ -301,7 +305,8 @@ fun MyApp(counterViewModel: CounterViewModel = CounterViewModel()) {
                     .wrapContentSize(Alignment.Center)
                     .padding(bottom = 20.dp)
             ) {
-                numberInCircle("-",
+                numberInCircle(
+                    "-",
                     modifier = Modifier
                         .pointerInteropFilter {
                             when (it.action) {
@@ -319,9 +324,11 @@ fun MyApp(counterViewModel: CounterViewModel = CounterViewModel()) {
                         }
                         .padding(end = 10.dp),
                     MaterialTheme.colors.secondary,
-                    MaterialTheme.colors.onSecondary)
+                    MaterialTheme.colors.onSecondary
+                )
 
-                numberInCircle("+",
+                numberInCircle(
+                    "+",
                     modifier = Modifier
                         .pointerInteropFilter {
                             when (it.action) {
@@ -330,7 +337,6 @@ fun MyApp(counterViewModel: CounterViewModel = CounterViewModel()) {
                                     counterViewModel.startIncrease()
                                 }
                                 MotionEvent.ACTION_MOVE -> {
-
                                 }
                                 MotionEvent.ACTION_UP -> {
                                     Log.d("Touch", "Length: ${it.eventTime - it.downTime}")
@@ -342,13 +348,15 @@ fun MyApp(counterViewModel: CounterViewModel = CounterViewModel()) {
                         }
                         .padding(start = 10.dp),
                     MaterialTheme.colors.secondary,
-                    MaterialTheme.colors.onSecondary)
+                    MaterialTheme.colors.onSecondary
+                )
             }
 
             Button(
                 onClick = {
                     counterViewModel.startTimer()
-                }, modifier = Modifier
+                },
+                modifier = Modifier
                     .fillMaxWidth(),
                 enabled = buttons.start
             ) {
@@ -358,7 +366,8 @@ fun MyApp(counterViewModel: CounterViewModel = CounterViewModel()) {
             Button(
                 onClick = {
                     counterViewModel.stopTimer()
-                }, modifier = Modifier
+                },
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp),
                 enabled = buttons.stop
@@ -378,11 +387,11 @@ fun numberInCircle(
 ) {
     Column(
         modifier = modifier
-            //.wrapContentSize(Alignment.Center)
+            // .wrapContentSize(Alignment.Center)
             .size(100.dp)
             .clip(CircleShape),
 //                horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center
     ) {
         Box(
             modifier = Modifier
@@ -392,7 +401,9 @@ fun numberInCircle(
         ) {
             Text(
                 text = number,
-                modifier = Modifier.fillMaxSize().padding(top = 23.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 23.dp),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h4,
                 color = fgColor,
@@ -436,7 +447,6 @@ fun CanvasDrawOctogon(border: Int = 0) {
             Offset(xstart + hexlength, ystart), strokeWidth = strokeWidth
         )
 
-
         color = if (activeBorder == 2) {
             activeBorderColor
         } else {
@@ -444,8 +454,10 @@ fun CanvasDrawOctogon(border: Int = 0) {
         }
         // \ diag
         drawLine(
-            color, Offset(xstart + hexlength, ystart),
-            Offset(xstart + hexlength + diagonalmove, ystart + diagonalmove), strokeWidth = strokeWidth
+            color,
+            Offset(xstart + hexlength, ystart),
+            Offset(xstart + hexlength + diagonalmove, ystart + diagonalmove),
+            strokeWidth = strokeWidth
         )
 
         color = if (activeBorder == 3) {
@@ -468,8 +480,10 @@ fun CanvasDrawOctogon(border: Int = 0) {
         }
         // / diag
         drawLine(
-            color, Offset(xstart + hexlength + diagonalmove, ystart + hexlength + diagonalmove),
-            Offset(xstart + hexlength, ystart + hexlength + 2 * diagonalmove), strokeWidth = strokeWidth
+            color,
+            Offset(xstart + hexlength + diagonalmove, ystart + hexlength + diagonalmove),
+            Offset(xstart + hexlength, ystart + hexlength + 2 * diagonalmove),
+            strokeWidth = strokeWidth
         )
 
         color = if (activeBorder == 5) {
@@ -490,8 +504,10 @@ fun CanvasDrawOctogon(border: Int = 0) {
         }
         // \ diag
         drawLine(
-            color, Offset(xstart, ystart + hexlength + 2 * diagonalmove),
-            Offset(xstart - diagonalmove, ystart + hexlength + diagonalmove), strokeWidth = strokeWidth
+            color,
+            Offset(xstart, ystart + hexlength + 2 * diagonalmove),
+            Offset(xstart - diagonalmove, ystart + hexlength + diagonalmove),
+            strokeWidth = strokeWidth
         )
 
         color = if (activeBorder == 7) {
@@ -505,7 +521,6 @@ fun CanvasDrawOctogon(border: Int = 0) {
             Offset(xstart - diagonalmove, ystart + diagonalmove), strokeWidth = strokeWidth
         )
 
-
         color = if (activeBorder == 8) {
             activeBorderColor
         } else {
@@ -516,7 +531,6 @@ fun CanvasDrawOctogon(border: Int = 0) {
             color, Offset(xstart - diagonalmove, ystart + diagonalmove),
             Offset(xstart, ystart), strokeWidth = strokeWidth
         )
-
     }
 }
 
@@ -535,4 +549,3 @@ fun DarkPreview() {
         MyApp()
     }
 }
-
